@@ -1,4 +1,8 @@
 <resources>
+
+    <!--FACEBOOK-->
+    <string name="facebook_app_id">130296614189164</string>
+
     <string name="title_activity_drawer_cliente">ManagerCounts Cliente</string>
     <string name="title_activity_drawer">ManagerCounts Admin</string>
     <string name="app_name">Manager Counts</string>
@@ -60,4 +64,7 @@
     <string name="fb">FACEBOOK</string>
     <string name="g">GOOGLE</string>
     <string name="cedula">CEDULA</string>
+    <string name="cancel_login">LOGUEO CANCELADO</string>
+    <string name="error_login">ERROR AL INGRESAR</string>
+    <string name="firebase_error_login">ERROR CON FIREBASE</string>
 </resources>

@@ -17,6 +17,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.facebook.AccessToken;
+import com.facebook.login.LoginManager;
+import com.google.firebase.auth.FirebaseAuth;
+
 public class DrawerClienteActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -27,6 +31,7 @@ public class DrawerClienteActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drawer_cliente);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -103,6 +108,9 @@ public class DrawerClienteActivity extends AppCompatActivity
         } else if (id == R.id.nav_HacerPedidos) {
             fragmentoGenerico = new FragmentoHacerPedidos();
         } else if (id == R.id.nav_CerrarSesion) {
+            FirebaseAuth.getInstance().signOut();
+            LoginManager.getInstance().logOut();
+            goLoginScreen();
             startActivity(new Intent(this, LoginActivity.class));
             finish();
         }
@@ -118,5 +126,10 @@ public class DrawerClienteActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+    private void goLoginScreen() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 }

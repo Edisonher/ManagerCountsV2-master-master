@@ -36,24 +36,16 @@
                 android:text="@string/InicioSesion"
                 android:onClick="Inicio"
                 android:id="@+id/bLIniciar"/>
-            <LinearLayout
-                android:layout_width="match_parent"
+
+            <com.facebook.login.widget.LoginButton
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
-                android:layout_marginRight="30dp"
-                android:orientation="horizontal">
+                android:layout_marginTop="10dp"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
+                android:layout_gravity="center"
+                android:id="@+id/bLoginFacebbok"/>
 
-                <Button style="@style/StyleButton"
-                    android:text="@string/fb"
-                    android:onClick="Inicio"
-                    android:id="@+id/bFacebook"/>
-
-                <Button style="@style/StyleButton"
-                    android:background="@color/darkred"
-                    android:text="@string/g"
-                    android:onClick="Inicio"
-                    android:id="@+id/bGoogle"/>
-            </LinearLayout>
             <TextView
                 android:layout_width="120dp"
                 android:layout_height="40dp"
@@ -63,6 +55,12 @@
                 android:layout_margin="5dp"
                 android:clickable="true"
                 android:id="@+id/tLRegistrarse"/>
+            <ProgressBar
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                android:visibility="gone"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

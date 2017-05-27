@@ -17,17 +17,23 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/usuario"/>
             <TextView style="@style/StyleTextViewDatos"
-                android:hint="@string/nombre"/>
+                android:hint="@string/nombre"
+                android:id="@+id/tNombreCliente"/>
             <TextView style="@style/StyleTextViewDatos"
-                android:hint="@string/telefono"/>
+                android:hint="@string/telefono"
+                android:id="@+id/tTelefono"/>
             <TextView style="@style/StyleTextViewDatos"
-                android:hint="@string/direccion"/>
+                android:hint="@string/direccion"
+                android:id="@+id/tDireccion"/>
             <TextView style="@style/StyleTextViewDatos"
-                android:hint="@string/barrio"/>
+                android:hint="@string/barrio"
+                android:id="@+id/tBarrio"/>
             <TextView style="@style/StyleTextViewDatos"
-                android:hint="@string/cuenta"/>
+                android:hint="@string/cuenta"
+                android:id="@+id/tCuenta"/>
             <TextView style="@style/StyleTextViewDatos"
-                android:hint="@string/pago"/>
+                android:hint="@string/pago"
+                android:id="@+id/tProxPago"/>
 
         </LinearLayout>
     </ScrollView>
