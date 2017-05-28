@@ -17,6 +17,13 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -25,7 +32,13 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+
+    private GoogleApiClient googleApiClient;    //LINEA 1
+
+    private SignInButton signInButton;
+
+    public static final int SIGN_IN_CODE = 777;
 
     private LoginButton loginButton;
     private CallbackManager callbackManager;
@@ -39,14 +52,37 @@ public class LoginActivity extends AppCompatActivity {
     TextView tLRegistrarse;
 
     EditText eLUsuario, eLClave;
+    private int OpLog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        //progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        //******************************************************************************************************************//
+        //LOGIN DE GOOGLE
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail().build();
+        googleApiClient = new GoogleApiClient.Builder(this) //Googleapiclient es el intermedio entre las api de google y la app
+                .enableAutoManage(this, this)   //Gestiona el ciclo de vida del googleapiclient
+                // con el del activity,el primer parametro es la activity y el segundo es el que se
+                //se encarga de escuchar si algo salio mal
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
 
+        signInButton = (SignInButton) findViewById(R.id.bLoginGoogle);
+        signInButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                OpLog=1;
+                Intent intent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
+                startActivityForResult(intent, SIGN_IN_CODE);
+            }
+        });
+        //******************************************************************************************************************//
+        //progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+        //LOGIN CON FACEBOOK
         callbackManager = CallbackManager.Factory.create();
 
         loginButton = (LoginButton) findViewById(R.id.bLoginFacebbok);
@@ -54,6 +90,7 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
+                OpLog=2;
                 handleFacebookAccesToken (loginResult.getAccessToken());
             }
 
@@ -78,7 +115,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         };
-
+        //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
         bLIniciar = (Button) findViewById(R.id.bLIniciar);              //Botón Iniciar que esta en la actividad Login, al presionarse debe direccionar .
         tLRegistrarse = (TextView) findViewById(R.id.tLRegistrarse);    //El TextView REGISTRARSE funciona como un botón el cual direcciona a la actividad REGISTRO.
 
@@ -94,7 +131,57 @@ public class LoginActivity extends AppCompatActivity {
         });
 
     }
+    //*******************************************************************************************************************//
+    //GOOGLE
 
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {     //A este método le llegan los resultados
+        super.onActivityResult(requestCode, resultCode, data);
+        if (OpLog==1) {    //login con Google
+            // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+            if(requestCode == SIGN_IN_CODE){
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+                if (result.isSuccess()) {
+                    // Google Sign In was successful, authenticate with Firebase
+                    GoogleSignInAccount account = result.getSignInAccount();
+                    handleSignInResult(result);
+                } else {
+                    // Google Sign In failed, update UI appropriately
+                    // ...
+                }
+            }
+
+        }else {             //login con facebook
+            callbackManager.onActivityResult(requestCode, resultCode, data);
+        }
+    }/*
+        if (requestCode == 1234 && resultCode == RESULT_OK){
+
+        } else if (requestCode == 1234 && resultCode == RESULT_CANCELED){
+            Toast.makeText(this, "ERROR en Registro", Toast.LENGTH_SHORT).show();
+        }*/
+
+    private void handleSignInResult(GoogleSignInResult result) {
+        if (result.isSuccess()){
+            goMainScreen();
+        }else{
+            Toast.makeText(this, R.string.not_login, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /*private void goMainScreen() {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }*/
+    //*********************************************************************************************************************//
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+    //FACEBOOK
     private void handleFacebookAccesToken(AccessToken accessToken) {
 
         //progressBar.setVisibility(View.VISIBLE);
@@ -124,6 +211,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onStop();
         firebaseAuth.removeAuthStateListener(firebaseAuthListener);
     }
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
     private void goMainScreen() {
         Intent intent = new Intent(this, DrawerClienteActivity.class);
@@ -131,7 +219,7 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+    /*protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if (requestCode == 1234 && resultCode == RESULT_OK){
 
         } else if (requestCode == 1234 && resultCode == RESULT_CANCELED){
@@ -140,7 +228,7 @@ public class LoginActivity extends AppCompatActivity {
             super.onActivityResult(requestCode, resultCode, data);
             callbackManager.onActivityResult(requestCode, resultCode, data);
         }
-    }
+    }*/
 
 
     public void Inicio(View view){

@@ -67,4 +67,6 @@
     <string name="cancel_login">LOGUEO CANCELADO</string>
     <string name="error_login">ERROR AL INGRESAR</string>
     <string name="firebase_error_login">ERROR CON FIREBASE</string>
+    <string name="not_log_in">NO SE PUDO LOGUEAR</string>
+    <string name="not_login">ERROR AL LOGUEAR</string>
 </resources>

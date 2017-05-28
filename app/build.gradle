@@ -38,6 +38,7 @@ dependencies {
     compile 'com.google.firebase:firebase-storage:9.0.0'
     compile 'com.android.support:recyclerview-v7:25.3.1'
     compile 'com.github.bumptech.glide:glide:3.7.0'
+    compile 'com.google.android.gms:play-services-auth:9.0.0'   //Autenticación Google
 
 }
 apply plugin: 'com.google.gms.google-services'
